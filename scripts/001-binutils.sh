@@ -1,9 +1,11 @@
 #!/bin/sh -e
-# Builds arm-none-eabi (baremetal) arm binutils
+# Build arm-none-eabi binutils
+# Take INSTALL_DIR from environment.
+#
 # Derived from:
 # binutils-PPU.sh by Naomi Peori (naomi@peori.ca)
 
-BINUTILS="binutils-2.22"
+BINUTILS="binutils-2.38"
 
 if [ ! -d ${BINUTILS} ]; then
 
@@ -17,37 +19,32 @@ if [ ! -d ${BINUTILS} ]; then
   ## Unpack the source code.
   tar xfvj ${BINUTILS}.tar.bz2
 
-  ## Patch the source code.
-  cat ../patches/${BINUTILS}-PS3.patch | patch -p1 -d ${BINUTILS}
-
   ## Replace config.guess and config.sub
   cp config.guess config.sub ${BINUTILS}
 
 fi
 
-if [ ! -d ${BINUTILS}/build-ppu ]; then
+if [ ! -d ${BINUTILS}/build ]; then
 
   ## Create the build directory.
-  mkdir ${BINUTILS}/build-ppu
+  mkdir ${BINUTILS}/build
 
 fi
 
 ## Enter the build directory.
-cd ${BINUTILS}/build-ppu
+cd ${BINUTILS}/build
 
 ## Configure the build.
-../configure --prefix="$PS3DEV/ppu" --target="powerpc64-ps3-elf" \
+../configure --prefix="$INSTALL_DIR" --target="arm-none-eabi" \
     --disable-nls \
     --disable-shared \
     --disable-debug \
     --disable-dependency-tracking \
     --disable-werror \
-    --enable-64-bit-bfd \
     --with-gcc \
     --with-gnu-as \
     --with-gnu-ld
 
 ## Compile and install.
-PROCS="$(nproc --all 2>&1)" || ret=$?
-if [ ! -z $ret ]; then PROCS=4; fi
-${MAKE:-make} -j $PROCS && ${MAKE:-make} libdir=host-libs/lib install
+make -j
+make install

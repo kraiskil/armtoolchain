@@ -1,8 +1,13 @@
 #!/bin/sh -e
+# Build arm-none-eabi binutils
+# Take INSTALL_DIR from environment.
+#
+# Derived from:
 # gcc-newlib-PPU.sh by Naomi Peori (naomi@peori.ca)
 
-GCC="gcc-7.2.0"
-NEWLIB="newlib-1.20.0"
+GCC="gcc-12.1.0"
+NEWLIB="newlib-4.1.0"
+
 
 if [ ! -d ${GCC} ]; then
 
@@ -13,10 +18,6 @@ if [ ! -d ${GCC} ]; then
   ## Unpack the source code.
   rm -Rf ${GCC} && tar xfvJ ${GCC}.tar.xz
   rm -Rf ${NEWLIB} && tar xfvz ${NEWLIB}.tar.gz
-
-  ## Patch the source code.
-  cat ../patches/${GCC}-PS3.patch | patch -p1 -d ${GCC}
-  cat ../patches/${NEWLIB}-PS3.patch | patch -p1 -d ${NEWLIB}
 
   ## Enter the source code directory.
   cd ${GCC}
@@ -33,18 +34,19 @@ if [ ! -d ${GCC} ]; then
 
 fi
 
-if [ ! -d ${GCC}/build-ppu ]; then
+if [ ! -d ${GCC}/build ]; then
 
   ## Create the build directory.
-  mkdir ${GCC}/build-ppu
+  mkdir ${GCC}/build
 
 fi
 
 ## Enter the build directory.
-cd ${GCC}/build-ppu
+cd ${GCC}/build
 
 ## Configure the build.
-../configure --prefix="$PS3DEV/ppu" --target="powerpc64-ps3-elf" \
+CFLAGS_FOR_TARGET="-O4 -ffast-math -ftree-vectorize -funroll-loops -D_IEEE_LIBM" \
+../configure --prefix="$INSTALL_DIR" --target="arm-none-eabi" \
     --disable-dependency-tracking \
     --disable-libcc1 \
     --disable-libstdcxx-pch \
@@ -53,16 +55,13 @@ cd ${GCC}/build-ppu
     --disable-shared \
     --disable-win32-registry \
     --enable-languages="c,c++" \
-    --enable-long-double-128 \
     --enable-lto \
     --enable-threads \
-    --with-cpu="cell" \
     --with-newlib \
     --enable-newlib-multithread \
     --enable-newlib-hw-fp \
     --with-system-zlib
 
 ## Compile and install.
-PROCS="$(nproc --all 2>&1)" || ret=$?
-if [ ! -z $ret ]; then PROCS=4; fi
-${MAKE:-make} -j $PROCS all && ${MAKE:-make} install
+make -j
+make install
