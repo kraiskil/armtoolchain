@@ -45,12 +45,13 @@ fi
 cd ${GCC}/build
 
 ## Configure the build.
-CFLAGS_FOR_TARGET="-O4 -ffast-math -ftree-vectorize -funroll-loops -D_IEEE_LIBM" \
-../configure --prefix="$INSTALL_DIR" --target="arm-none-eabi" \
+CFLAGS_FOR_TARGET="-O4 -ffast-math -ftree-vectorize -funroll-loops"
+../configure --prefix="$INSTALL_DIR" --target="arm-none-eabi" CFLAGS_FOR_TARGET="$CFLAGS_FOR_TARGET" \
     --disable-dependency-tracking \
     --disable-libcc1 \
     --disable-libstdcxx-pch \
-    --disable-multilib \
+    --enable-multilib \
+    --with-multilib-list=rmprofile \
     --disable-nls \
     --disable-shared \
     --disable-win32-registry \
@@ -59,7 +60,6 @@ CFLAGS_FOR_TARGET="-O4 -ffast-math -ftree-vectorize -funroll-loops -D_IEEE_LIBM"
     --enable-threads \
     --with-newlib \
     --enable-newlib-multithread \
-    --enable-newlib-hw-fp \
     --with-system-zlib
 
 ## Compile and install.
