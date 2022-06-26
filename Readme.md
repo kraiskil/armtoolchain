@@ -17,5 +17,5 @@ are linked against some old python version that was shipped with Ubuntu 18.04LTS
 has been two LTS releases since, and that version of python is nolonger even available for download on python.org). 
 
 ## Kudos
-The scripts are ported from the [PS3toolchain scripts](https://github.com/ps3dev/ps3toolchain).
+Most of the scripts are ported from the [PS3toolchain scripts](https://github.com/ps3dev/ps3toolchain).
 Only minimal cosmetic updates were needed.
