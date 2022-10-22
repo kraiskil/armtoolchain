@@ -42,5 +42,5 @@ cd ${GDB}/build
     --disable-werror
 
 ## Compile and install.
-make -j
+make $MAKE_FLAGS
 make install

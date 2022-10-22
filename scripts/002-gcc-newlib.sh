@@ -63,5 +63,5 @@ CFLAGS_FOR_TARGET="-O4 -ffast-math -ftree-vectorize -funroll-loops"
     --with-system-zlib
 
 ## Compile and install.
-make -j
+make $MAKE_FLAGS
 make install

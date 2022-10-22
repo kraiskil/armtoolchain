@@ -46,5 +46,5 @@ cd ${BINUTILS}/build
     --with-gnu-ld
 
 ## Compile and install.
-make -j
+make $MAKE_FLAGS
 make install
